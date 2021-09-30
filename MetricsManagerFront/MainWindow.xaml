@@ -11,7 +11,9 @@
         <local:MaterialCard  x:Name="RamChart" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="20,0" />
 
         <Button Width="200" Height="50" Click="Button_Click" Margin="450,553,765,82">Get data</Button>
-        <ComboBox x:Name="comboBoxAgentsList" HorizontalAlignment="Left" Height="50" Margin="35,553,0,0" VerticalAlignment="Top" Width="270" DropDownOpened="comboBoxAgentsList_DropDownOpened"  />
+        <ComboBox x:Name="comboBoxAgentsList" HorizontalAlignment="Left" Height="50" Margin="35,553,0,0" VerticalAlignment="Top" Width="270"
+                  DropDownOpened="comboBoxAgentsList_DropDownOpened"
+        />
         <!--<StackPanel Grid.Row="3" Grid.Column="3" Orientation="Vertical" Margin="10,10,10,10" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <local:MaterialCard Grid.Column="0" Grid.Row="0" x:Name="CpuChart"></local:MaterialCard>
             <Button Grid.Column="1" Grid.Row="1" Width="400" Height="91" Click="Button_Click">Get data</Button>

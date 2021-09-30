@@ -1,7 +1,10 @@
-﻿using System;
+﻿//using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,14 +18,24 @@ using System.Windows.Shapes;
 
 namespace MetricsManagerFront
 {
+    public class Agent
+    {
+        public int agentId {  get; set; }
+        public string agentUri {  get; set; }
+
+        public new string ToString()
+        {
+            return $"ID: {agentId}, Url: {agentUri}";
+        }
+    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
         Random rnd = new Random(); //для отладки
-        Uri managerUri = new Uri("localhost:44380"); //в дальнейшем брать значение из GUI
-        List<string> agentsList = new List<string>();
+        string managerAddress = "https://localhost:44380"; //в дальнейшем брать значение из GUI
+        public List<Agent> agentsList = new List<Agent>();
         public MainWindow()
         {
             InitializeComponent();
@@ -36,13 +49,25 @@ namespace MetricsManagerFront
             RamChart.CaptionName.Text = "Ram Load";
             RamChart.PercentTextBlock.Text = "...";
 
-            agentsList = GetAgentsListFromManager(managerUri);
+            agentsList = GetAgentsListFromManager(managerAddress);
+
 
         }
 
-        private List<string> GetAgentsListFromManager(Uri managerUri)
+        private List<Agent> GetAgentsListFromManager(string managerAddress)
         {
-            
+            managerAddress += "/api/Agents/agentslist";
+            var request = new HttpRequestMessage(HttpMethod.Get, new Uri(managerAddress));
+            var response = new HttpClient().SendAsync(request).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                using (var responseStream = response.Content.ReadAsStreamAsync().Result)
+                {
+                    return JsonSerializer.DeserializeAsync<List<Agent>>(responseStream, new JsonSerializerOptions(JsonSerializerDefaults.Web)).Result;
+                }
+            }
+            return null;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -71,6 +96,12 @@ namespace MetricsManagerFront
 
         private void comboBoxAgentsList_DropDownOpened(object sender, EventArgs e)
         {
+            List<string> agents = new List<string>();
+            foreach (var item in agentsList)
+            {
+                agents.Add(item.ToString());
+            }
+            comboBoxAgentsList.ItemsSource = agents;
 
         }
     }
